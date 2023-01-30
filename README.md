@@ -172,73 +172,75 @@ If no one exceeded the score limit, then reshuffle the deck and begin another ro
 ## 6 Example
 This is an example game of Straights, including only a few interesting snippets. The [...] indicates where the rest of the game
 has been excluded. More features have been implemented.
-  Is Player1 a human (h) or a computer (c)?
-  >h
-  Is Player2 a human (h) or a computer (c)?
-  >c
-  Is Player3 a human (h) or a computer (c)?
-  >c
-  Is Player4 a human (h) or a computer (c)?
-  >c
-  A new round begins. It’s Player4’s turn to play.
-  Cards on the table:
-  Clubs:
-  Diamonds:
-  Hearts:
-  Spades:
-  Your hand: 7C QS KH 5S 6S JD AD 7S 8D TD 6D TC KD
-  Legal plays: 7S
-  >Player4 plays 7S.
-  Cards on the table:
-  Clubs:
-  Diamonds:
-  Hearts:
-  Spades: 7
-  Your hand: 4H 5D 2D JC 8H QH 2H 6C 9H 9D 9C AS 2C
-  Legal plays:
-  >deck
-  4H 5D 2D JC 8H QH 2H 6C 9H 9D 9C AS 2C
-  JS QD 5C 8C 4D 5H KC 7D KS AC JH 6H 7H
-  3H 4C 3S 3D AH QC 3C TH 4S 9S 2S 8S TS
-  7C QS KH 5S 6S JD AD 7S 8D TD 6D TC KD
-  >discard AS
-  Player1 discards AS.
-  Cards on the table:
-  Clubs:
-  Diamonds:
-  Hearts:
-  Spades: 7
-  Your hand: JS QD 5C 8C 4D 5H KC 7D KS AC JH 6H 7H
-  Legal plays: 7D 7H
-  ...
-  Cards on the table:
-  Clubs: 7
-  Diamonds: 7
-  Hearts:
-  Spades: 7 8
-  Your hand: 4H 5D 2D JC 8H QH 2H 6C 9H 9D 9C 2C
-  Legal plays: 6C
-  >play 6C
-  Player1 plays 6C.
-  ...
-  >ragequit
-  Player1 ragequits. A computer will now take over.
-  Player1 discards 4H.
-  ...
-  Cards on the table:
-  Clubs: 6 7 8 9
-  Diamonds: 5 6 7 8
-  Hearts: A 2 3 4 5 6 7 8 9 T J
-  Spades: A 2 3 4 5 6 7 8 9 T J Q
-  Your hand: 3C
-  Legal plays:
-  >Player3 discards 3C.
-  Player1’s discards: 9D QD KH KD 2D
-  Player1’s score: 16 + 49 = 65
-  Player2’s discards: 5C JD QH AD 3D KC
-  Player2’s score: 40 + 45 = 85
-  Player3’s discards: AC 4C 3C
-  Player3’s score: 15 + 8 = 23
-  Player4’s discards: KS QC 2C 4D TD TC JC
-  Player4’s score: 53 + 62 = 115
-  Player3 wins!
+```
+Is Player1 a human (h) or a computer (c)?
+>h
+Is Player2 a human (h) or a computer (c)?
+>c
+Is Player3 a human (h) or a computer (c)?
+>c
+Is Player4 a human (h) or a computer (c)?
+>c
+A new round begins. It’s Player4’s turn to play.
+Cards on the table:
+Clubs:
+Diamonds:
+Hearts:
+Spades:
+Your hand: 7C QS KH 5S 6S JD AD 7S 8D TD 6D TC KD
+Legal plays: 7S
+>Player4 plays 7S.
+Cards on the table:
+Clubs:
+Diamonds:
+Hearts:
+Spades: 7
+Your hand: 4H 5D 2D JC 8H QH 2H 6C 9H 9D 9C AS 2C
+Legal plays:
+>deck
+4H 5D 2D JC 8H QH 2H 6C 9H 9D 9C AS 2C
+JS QD 5C 8C 4D 5H KC 7D KS AC JH 6H 7H
+3H 4C 3S 3D AH QC 3C TH 4S 9S 2S 8S TS
+7C QS KH 5S 6S JD AD 7S 8D TD 6D TC KD
+>discard AS
+Player1 discards AS.
+Cards on the table:
+Clubs:
+Diamonds:
+Hearts:
+Spades: 7
+Your hand: JS QD 5C 8C 4D 5H KC 7D KS AC JH 6H 7H
+Legal plays: 7D 7H
+...
+Cards on the table:
+Clubs: 7
+Diamonds: 7
+Hearts:
+Spades: 7 8
+Your hand: 4H 5D 2D JC 8H QH 2H 6C 9H 9D 9C 2C
+Legal plays: 6C
+>play 6C
+Player1 plays 6C.
+...
+>ragequit
+Player1 ragequits. A computer will now take over.
+Player1 discards 4H.
+...
+Cards on the table:
+Clubs: 6 7 8 9
+Diamonds: 5 6 7 8
+Hearts: A 2 3 4 5 6 7 8 9 T J
+Spades: A 2 3 4 5 6 7 8 9 T J Q
+Your hand: 3C
+Legal plays:
+>Player3 discards 3C.
+Player1’s discards: 9D QD KH KD 2D
+Player1’s score: 16 + 49 = 65
+Player2’s discards: 5C JD QH AD 3D KC
+Player2’s score: 40 + 45 = 85
+Player3’s discards: AC 4C 3C
+Player3’s score: 15 + 8 = 23
+Player4’s discards: KS QC 2C 4D TD TC JC
+Player4’s score: 53 + 62 = 115
+Player3 wins!
+```
