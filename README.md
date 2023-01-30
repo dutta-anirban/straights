@@ -32,7 +32,7 @@ When a player has no legal plays, they must then choose a card in their hand, an
 discard. Note that if a player has at least one legal play in their hand, then they must make a legal play; they may not discard
 in this case.
 
-# 4 Scoring
+## 4 Scoring
 The round ends when all the cards have either been played or discarded. For each player, their score for the round is the sum
 of all the ranks of the player’s discards. Jacks, Queens, and Kings count as 11, 12, and 13 points, respectively. For example,
 if a player discarded an Ace, a Six, and a King, the number of points would be 1 + 6 + 13 = 20.
