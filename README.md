@@ -168,7 +168,7 @@ for the winning player(s):
 Player<x> wins!
 If multiple players tie for the win, print the above message for each winner.
 If no one exceeded the score limit, then reshuffle the deck and begin another round.
-6 Example
+## 6 Example
 This is an example game of Straights, including only a few interesting snippets. The [...] indicates where the rest of the game
 has been excluded.
 Is Player1 a human (h) or a computer (c)?
