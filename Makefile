@@ -13,6 +13,7 @@ OPTIONS = \
 	-lembind \
 	-Isrc \
 	-std=c++14 \
+	-Os \
 	-Wno-unqualified-std-cast-call \
 	-sASYNCIFY -sASYNCIFY_IMPORTS=getInput -sASYNCIFY_STACK_SIZE=128000
 
@@ -24,7 +25,7 @@ output.zip: straights.js straights.wasm
 
 .PHONY: clean
 clean:
-	rm -f straights.js straights.wasm
+	rm -f straights.js straights.wasm output.zip
 
 .PHONY: all
-all: straights.js straights.wasm
+all: straights.js straights.wasm output.zip

@@ -277,7 +277,7 @@ void gameLoop(unsigned seed) {
             }
         }
     }
-    std::cout << std::endl << "Let's set up the winning threshold! A regular game of straights has the minimum points to win set as 80. A lower threshold will make the game shorter, and vice-versa. What would you like it to be?" << std::endl;
+    std::cout << "\nLet's set up the winning threshold! A regular game of straights has the minimum points to win set as 80. A lower threshold will make the game shorter, and vice-versa. What would you like it to be?" << std::endl;
     maxScore = inputTaker<int>([](int x){
         return x >= 1;
     }, "Invalid input! Expected threshold should be more than one (>= 1).");
@@ -310,11 +310,11 @@ void gameLoop(unsigned seed) {
             int player7S = has7S(playerCards, numOfPlayers);
             currPlayer = player7S;
             if (round != 0) {
-                std::cout << "────────────────────────────────SCORE BOARD────────────────────────────────" << std::endl << std::endl;
+                std::cout << "────────────────────────────────SCORE BOARD────────────────────────────────\n\n";
                 for (int i = 0; i < numOfPlayers; ++i) {
                     std::cout << playerNames[i] << " (Player " << (i+1) <<")'s discarded cards: ";
                     if (playerDiscards[i].size() == 0) {
-                        std::cout << "NONE" << std::endl;
+                        std::cout << "NONE\n";
                     } else {
                         std::cout << std::endl;
                         printCardVec(playerDiscards[i], cardview);
@@ -322,7 +322,7 @@ void gameLoop(unsigned seed) {
                     std::cout << playerNames[i] << " (Player " << (i+1) <<")'s score: ";
                     temp = getScore(playerDiscards[i]);
                     std::cout << prevScore[i] << " + " << temp << " = " << (temp + prevScore[i]) << std::endl;
-                    std::cout << "───────────────────────────────────────────────────────────────────" << std::endl;
+                    std::cout << "───────────────────────────────────────────────────────────────────\n";
                     prevScore[i] += temp;
                     playerDiscards[i].clear();
                 }
@@ -332,16 +332,19 @@ void gameLoop(unsigned seed) {
             }
             round++;
             turns = 0;
-            std::cout << std::endl << "The winning threshold hasn't been met yet! Setting up new deck and table . . ." << std::endl << std::endl;
+            std::cout << std::endl << "The winning threshold hasn't been met yet! Setting up new deck and table . . .\n\n";
             std::string roundNum = (round < 10)? "0" + std::to_string(round) : std::to_string(round);
-            std::cout << " ╔════════════╗ " << std::endl;
-            std::cout << " ║  ROUND " << roundNum << "  ║ " << std::endl;
-            std::cout << " ╚════════════╝ " << std::endl << std::endl;
-            std::cout << "It's " << playerNames[player7S] << " (Player " << (player7S+1) << ")'s turn to play." << std::endl;
+            std::cout << " ╔════════════╗\n";
+            std::cout << " ║  ROUND " << roundNum << "  ║\n";
+            std::cout << " ╚════════════╝\n\n";
+            std::cout << playerNames[player7S] << " (Player " << (player7S+1) << ") starts the round.\n\n";
         }
 
         // BOARD
-        std::cout << "Cards on the table:" << std::endl << std::endl << "Clubs: ";
+        std::cout << " ╔════════════════════╗\n";
+        std::cout << " ║ CARDS ON THE TABLE ║\n";
+        std::cout << " ╚════════════════════╝\n\n";
+        std::cout << "Clubs: ";
         for (auto x : board.getClubs()) {
             std::cout << rank_to_string(x.getRank()) << " ";
         }
