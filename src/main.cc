@@ -139,21 +139,25 @@ bool gameOver(int prevScore[], const int maxScore, const int numOfPlayers) {
     return false;
 }
 
-void turnDiv() {
-    std::cout << "┌───────────────────────────────────────────────────────────────────┐" << std::endl;
-    std::cout << "└───────────────────────────────────────────────────────────────────┘" << std::endl;
-}
-
 void printHelp() {
-    std::cout << " ** OBJECTIVE **" << std::endl;
+    std::cout << "╔═══════════╗" << std::endl;
+    std::cout << "║ OBJECTIVE ║" << std::endl;
+    std::cout << "╚═══════════╝" << std::endl << std::endl;
     std::cout << "Straights is a four-player game. The objective is to get the fewest number of points among the players." << std::endl;
     std::cout << "The game ends when one player accumulates 80 points or more, and the player with the lowest score is declared the winner." << std::endl;
     std::cout << "If the lowest score is a tie, then all players with that score win." << std::endl << std::endl;
-    std::cout << " ** THE DECK **" << std::endl;
+    std::cout << "╔══════════╗" << std::endl;
+    std::cout << "║ THE DECK ║" << std::endl;
+    std::cout << "╚══════════╝" << std::endl << std::endl;
     std::cout << "Straights uses a standard 52-card deck, without the jokers. Each player is dealt 13 cards at the beginning of each round." << std::endl;
     std::cout << "In this game, the Ace is considered to be the lowest card in each suit (rank of 1), while the King is the highest (rank of 13)." << std::endl;
     std::cout << "A Jack has a rank of 11, while the Queen has a rank of 12. The rank of all other cards is their numeric value e.g. 2 has a rank of 2." << std::endl << std::endl;
-    std::cout << " ** GAMEPLAY **" << std::endl << "  * LEGAL PLAYS *" << std::endl;
+    std::cout << "╔══════════╗" << std::endl;
+    std::cout << "║ GAMEPLAY ║" << std::endl;
+    std::cout << "╚══════════╝" << std::endl << std::endl;
+    std::cout << "  ┌─────────────┐" << std::endl;
+    std::cout << "  │ LEGAL PLAYS │" << std::endl;
+    std::cout << "  └─────────────┘" << std::endl;
     std::cout << "Immediately following the deal, the player with the 7 of spades goes first." << std::endl;
     std::cout << "This player must play the 7 of spades in the centre of the table. After the 7 of spades, the players take turns to play cards on the table." << std::endl;
     std::cout << "At this point, the players must play cards that constitute legal plays. The following cards are legal:" << std::endl;
@@ -164,23 +168,30 @@ void printHelp() {
     std::cout << std::endl << "For example, if the 7 of spades is the only card on the table, then the legal plays are: the 7 of diamonds, the 7 of hearts, the 7 of clubs," << std::endl;
     std::cout << "the 8 of spades, and the 6 of spades. Once the 8 of spades is played, the next legal plays are: the 9 of spades, the 6 of spades, the 7 of diamonds, the 7 of hearts, and the 7 of clubs.";
     std::cout << std::endl << std::endl;
-    std::cout << "  * DISCARDS *" << std::endl;
+    std::cout << "  ┌──────────┐" << std::endl;
+    std::cout << "  │ DISCARDS │" << std::endl;
+    std::cout << "  └──────────┘" << std::endl;
     std::cout << "When a player has no legal plays, they must then choose a card in their hand, and place it face down in front of them. This is a discard." << std::endl;
     std::cout << "Note that if a player has at least one legal play in their hand, then they must make a legal play; they may not discard in this case" << std::endl << std::endl;
-    std::cout << " ** SCORING **" << std::endl;
+    std::cout << "╔═════════╗" << std::endl;
+    std::cout << "║ SCORING ║" << std::endl;
+    std::cout << "╚═════════╝" << std::endl << std::endl;
     std::cout << "The round ends when all the cards have either been played or discarded. For each player, their score for the round is the sum of all the ranks of the player’s discards." << std::endl;
     std::cout << "Jacks, Queens, and Kings count as 11, 12, and 13 points, respectively. For example, if a player discarded an Ace, a Six, and a King, the number of points would be 1 + 6 + 13 = 20." << std::endl;
     std::cout << "Each player’s game score is of the sum of their scores in each round. If no player has accumulated 80 or more points at the end of a round, then the deck is reshuffled and another round begins." << std::endl;
-    std::cout << std::endl << std::endl << " ** COMMANDS **" << std::endl;
-    std::cout << "play <card>       plays the card. The card must be of the format <rank><suit>. Example: play QC" << std::endl;
-    std::cout << "discard <card>    discards the card. The card must be of the format <rank><suit>. Example: discard 7D" << std::endl;
-    std::cout << "deck              shows how the deck was shuffled. WARNING: This shows you the cards of all the players." << std::endl;
-    std::cout << "cardmode <on/off> turns the enhanced Card View feature on or off. Example: cardmode on" << std::endl;
-    std::cout << "change' to change the Difficulty mode of a Computer Player. Example: charge 3 e" << std::endl;
-    std::cout << "If Player3 is a Computer Player, its Difficulty will change to an Easy Computer Player level." << std::endl;
-    std::cout << "Use the command 'ragequit' to hand over your cards to a computer (Medium Difficulty) to play for you." << std::endl;
-    std::cout << "Use the command 'quit' to terminate the game immediately. A second confirmaton will be required." << std::endl;
-    std::cout << "Use the command 'help' to get the rules, objectives and command guide for the game." << std::endl;
+    std::cout << std::endl << std::endl;
+    std::cout << "╔══════════╗" << std::endl;
+    std::cout << "║ COMMANDS ║" << std::endl;
+    std::cout << "╚══════════╝" << std::endl << std::endl;
+    std::cout << "play <card>                       plays the card. The card must be of the format <rank><suit>. Example: play QC" << std::endl;
+    std::cout << "discard <card>                    discards the card. The card must be of the format <rank><suit>. Example: discard 7D" << std::endl;
+    std::cout << "deck                              shows how the deck was shuffled. WARNING: This shows you the cards of all the players." << std::endl;
+    std::cout << "cardmode <on/off>                 turns the enhanced Card View feature on or off. Example: cardmode on" << std::endl;
+    std::cout << "change <player #> <difficulty>    changes the Difficulty mode of a Computer Player. Example: charge 3 e" << std::endl;
+    std::cout << "                                  If Player3 is a Computer Player, its Difficulty will change to an Easy Computer Player level." << std::endl;
+    std::cout << "ragequit                          hands over your cards to a computer (Medium Difficulty) to play for you." << std::endl;
+    std::cout << "quit                              terminates the game immediately. A second confirmaton will be required." << std::endl;
+    std::cout << "help                              shows the rules, objectives, and command guide for the game." << std::endl;
 }
 
 void gameLoop(unsigned seed) {
@@ -228,7 +239,10 @@ void gameLoop(unsigned seed) {
     for (int i = 0; i < numOfPlayers; i++) {
         playerNames.emplace_back("Robot "+std::to_string(i+1));
     }
-    std::cout << std::endl << "*** WELCOME TO THE FOUR-PLAYER CARD GAME OF STRAIGHTS ***" << std::endl << std::endl;
+    std::cout << std::endl;
+    std::cout << "╔═════════════════════════════════════════════════╗" << std::endl;
+    std::cout << "║ WELCOME TO STRAIGHTS: THE FOUR-PLAYER CARD GAME ║" << std::endl;
+    std::cout << "╚═════════════════════════════════════════════════╝" << std::endl << std::endl;
     printHelp();
     std::cout << std::endl << "Let's set up the players!" << std::endl;
     for (int i = 0; i < numOfPlayers; ++i) {
@@ -291,7 +305,7 @@ void gameLoop(unsigned seed) {
             int player7S = has7S(playerCards, numOfPlayers);
             currPlayer = player7S;
             if (round != 0) {
-                std::cout << "──────────────────SCORE BOARD──────────────────" << std::endl;
+                std::cout << "────────────────────────────────SCORE BOARD────────────────────────────────" << std::endl << std::endl;
                 for (int i = 0; i < numOfPlayers; ++i) {
                     std::cout << playerNames[i] << " (Player " << (i+1) <<")'s discarded cards: ";
                     if (playerDiscards[i].size() == 0) {
@@ -303,7 +317,7 @@ void gameLoop(unsigned seed) {
                     std::cout << playerNames[i] << " (Player " << (i+1) <<")'s score: ";
                     temp = getScore(playerDiscards[i]);
                     std::cout << prevScore[i] << " + " << temp << " = " << (temp + prevScore[i]) << std::endl;
-                    turnDiv();
+                    std::cout << "───────────────────────────────────────────────────────────────────" << std::endl;
                     prevScore[i] += temp;
                     playerDiscards[i].clear();
                 }
@@ -440,8 +454,6 @@ void gameLoop(unsigned seed) {
             
             // CHANGE COMPUTER DIFFICULTY
             else if (command == "change") {
-                //std::string x;
-                //std::cin >> compNum >> toMode;
                 compNum = inputTaker<int>([&ch](int x){
                     return x >= 1 && x <= 4 && ch[x-1] == "c";
                 }, "Invalid input! Please enter a valid computer player!");
@@ -503,7 +515,9 @@ void gameLoop(unsigned seed) {
     }
 
     // DECLARING THE WINNER
-    std::cout << "Number of winners: " << winners << std::endl;
+    std::cout << "╔═════════════════╗" << std::endl;
+    std::cout << "║ CONGRATULATIONS ║" << std::endl;
+    std::cout << "╚═════════════════╝" << std::endl << std::endl;
     tempWinners = winners;
     for (int i = 0; i < numOfPlayers; ++i) {
         if (prevScore[i] == min) {
@@ -515,12 +529,13 @@ void gameLoop(unsigned seed) {
         }
     }
     if (winners > 1) {
-        std::cout << "win! Congratulations!" << std::endl;
+        std::cout << "win!";
     } else {
-        std::cout << "wins! Congratulations!" << std::endl;
+        std::cout << "wins!";
     }
+    std::cout << std::endl << std::endl;
     if (winners > 1) {
-        std::cout << "It was a " << winners << "-way tie!" << std::endl;
+        std::cout << "It was a " << winners << "-way tie!" << std::endl << std::endl;
     }
     std::cout << "Thanks for playing " << playerNames[0] << ", " << playerNames[1] << ", " << playerNames[2] << ", and " << playerNames[3] << "! <3" << std::endl << std::endl;
     std::cout << "╔═══════════╗" << std::endl;
