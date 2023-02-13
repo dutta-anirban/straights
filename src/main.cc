@@ -14,7 +14,6 @@
 #include <chrono>
 #include <deque>
 #include <limits>
-
 #include <functional>
 
 #ifndef WASM

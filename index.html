@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Straights</title>
+</head>
+
+<body>
+    <div id="terminal"></div>
+    <form onsubmit="return false">
+        <input id="input" type="text" title="Input" placeholder="Input" disabled="true" autocomplete="false"
+            autocapitalize="false" spellcheck="false" autofocus />
+        <button id="submit" type="submit" onclick="input_submit()" disabled="true">Push me, daddy!</button>
+    </form>
+    <script>
+        let input_resolver = () => { }
+        function new_input_promise() {
+            return new Promise((resolve, reject) => {
+                input_resolver = resolve
+            })
+        }
+        let my_promise = new_input_promise()
+        async function getInput() {
+            const result = await my_promise
+            my_promise = new_input_promise()
+            return result
+        }
+        var Module = {
+            onRuntimeInitialized: async function () {
+                document.getElementById('input').disabled = false
+                document.getElementById('submit').disabled = false
+                Module.gameLoop(0)
+            },
+            print: function(text) {
+                let p = document.createElement('p')
+                p.append(`${text}`)
+                document.getElementById('terminal').append(p)
+            },
+            printErr: function(text) {
+                document.getElementById('terminal').append(`${text}`)
+            }
+        }
+        function input_submit() {
+            const textbox = document.getElementById('input')
+            input_resolver(textbox.value)
+            textbox.value = ''
+        }
+    </script>
+    <script src="straights.js"></script>
+</body>
+
+</html>
