@@ -19,6 +19,9 @@ OPTIONS = \
 straights.js straights.wasm: ${SOURCES}
 	emcc ${OPTIONS} ${SOURCES} -o straights.js
 
+output.zip: straights.js straights.wasm
+	zip -9 output.zip straights.js straights.wasm index.html style.css
+
 .PHONY: clean
 clean:
 	rm -f straights.js straights.wasm

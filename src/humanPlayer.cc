@@ -18,8 +18,8 @@ bool HumanPlayer::play() {
 
     auto it = find(cards.begin(), cards.end(), cardChoice);
     if (it != cards.end()) {
-        std::cout << playerName << " (Player " << (playerNum+1) << ") plays " << cardChoice << "." << std::endl;
-        std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+        std::cout << playerName << " (Player " << (playerNum+1) << ") plays " << cardChoice << ".\n\n";
+        bar();
         board.play(cardChoice);
         cards.erase(it);
         return true;
@@ -61,8 +61,8 @@ bool HumanPlayer::discard() {
         std::cout << "Please discard a valid card." << std::endl;
         return false;
     } else {
-        std::cout << playerName << " (Player " << (playerNum+1) << ") discards " << cardChoice << "." << std::endl;
-        std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+        std::cout << playerName << " (Player " << (playerNum+1) << ") discards " << cardChoice << ".\n\n";
+        bar();
         discards.emplace_back(cardChoice);
         cards.erase(cards.begin()+index);
         return true;
