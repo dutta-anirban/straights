@@ -6,8 +6,8 @@ Player(playerNum, playerName, board, cards, discards, score) {}
 bool MedComp::play() {
     for (auto i = cards.begin(); i != cards.end(); ++i) {
         if (board.validMove(*i)) {
-            std::cout << playerName << " (Player " << (playerNum+1) << ") plays " << *i << "." << std::endl;
-            std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+            std::cout << playerName << " (Player " << (playerNum+1) << ") plays " << *i << "." << std::endl << std::endl;
+            bar();
             board.play(*i);
             cards.erase(i);
             return true;
@@ -18,8 +18,8 @@ bool MedComp::play() {
 }
 
 bool MedComp::discard() {
-    std::cout << playerName << " (Player " << (playerNum+1) << ") discards " << cards.front() << "." << std::endl;
-    std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+    std::cout << playerName << " (Player " << (playerNum+1) << ") discards " << cards.front() << "." << std::endl << std::endl;
+    bar();
     discards.emplace_back(cards.front());
     cards.erase(cards.begin());
     return true;

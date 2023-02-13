@@ -1,13 +1,29 @@
-CXX = g++
-CXXFLAGS = -std=c++14 -g -Wall -MMD
-OBJECTS = board.o card.o easyComp.o medComp.o hardComp.o humanPlayer.o player.o subject.o main.o 
-DEPENDS = ${OBJECTS:.o=.d}
-EXEC = straights
+SOURCES = \
+	wasm_lib.cc \
+	src/board.cc \
+	src/card.cc \
+	src/easyComp.cc \
+	src/hardComp.cc \
+	src/humanPlayer.cc \
+	src/medComp.cc \
+	src/player.cc \
+	src/subject.cc
 
-${EXEC} : ${OBJECTS}
-	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
+OPTIONS = \
+	-lembind \
+	-Isrc \
+	-std=c++14 \
+	-Wno-unqualified-std-cast-call \
+	-Os \
+	--closure 1 \
+	-flto
 
-clean :
-	rm ${DEPENDS} ${OBJECTS} ${EXEC}
+straights.js straights.wasm: ${SOURCES}
+	emcc ${OPTIONS} ${SOURCES} -o straights.js
 
--include ${DEPENDS} # reads the .d files and reruns dependencies
+.PHONY: clean
+clean:
+	rm -f straights.js straights.wasm
+
+.PHONY: all
+all: straights.js straights.wasm

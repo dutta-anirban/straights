@@ -15,8 +15,8 @@ bool EasyComp::play() {
     if (min == 14) {
         discard();
     } else {
-        std::cout << playerName << " (Player " << (playerNum+1) << ") plays " << *bestCard << "." << std::endl;
-        std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+        std::cout << playerName << " (Player " << (playerNum+1) << ") plays " << *bestCard << "." << std::endl << std::endl;
+        bar();
         board.play(*bestCard);
         cards.erase(bestCard);
     }
@@ -32,8 +32,8 @@ bool EasyComp::discard() {
             bestCard = i;
         }
     }
-    std::cout << playerName << " (Player " << (playerNum+1) << ") discards " << *bestCard << "." << std::endl;
-    std::cout << std::endl << "----------------------------------------------------------------------" << std::endl;
+    std::cout << playerName << " (Player " << (playerNum+1) << ") discards " << *bestCard << "." << std::endl << std::endl;
+    bar();
     discards.emplace_back(*bestCard);
     cards.erase(bestCard);
     return true;
