@@ -43,10 +43,12 @@ bool strEquals(std::string const& A, std::string const& B) {
     return true;
 }
 
-bool diffType(std::string const& A) {
-    return (strEquals(A, "e") || strEquals(A, "easy") || 
-            strEquals(A, "m") || strEquals(A, "medium") ||
-            strEquals(A, "h") || strEquals(A, "hard"));
+bool inpCheck(std::vector<std::string> const& A, std::string const& B) {
+    for (int i = 0; i < A.size(); i++) {
+        if (strEquals(A[i], B))
+            return true;
+    }
+    return false;
 }
 
 void printCardVec(std::vector<Card> const &deck, bool cardmode) {
@@ -227,6 +229,9 @@ void gameLoop(unsigned seed) {
     std::string compPlayer = "";
     std::string toMode = "";
     int compNum = -1;
+    std::vector<std::string> diffType = {"e", "easy", "m", "medium", "h", "hard"};
+    std::vector<std::string> viewType = {"y", "yes", "n", "no"};
+    std::vector<std::string> commType = {"play", "discard", "deck", "cardmode", "change", "ragequit", "quit", "help"};
 
     // FILLING UP DECK WITH CARDS IN ORDER
     for (int i = 0; i < numOfPlayers; ++i) {
@@ -260,8 +265,8 @@ void gameLoop(unsigned seed) {
         else if (hc == "c") {
             std::cout << "Select computer player difficulty: EASY(e)  MEDIUM(m)  HARD(h). Enter your choice below." << std::endl;
             mode = std::move(inputTaker<std::string>(
-                [](std::string const& mode) { 
-                    return diffType(mode); },
+                [&diffType](std::string const& mode) { 
+                    return inpCheck(diffType, mode); },
                     "Invalid input! Expected one of: e, m, h."));
             if (strEquals(mode, "e") || strEquals(mode, "easy"))  {
                 players.emplace_back(std::make_unique<EasyComp>(i, playerNames[i], board, playerCards[i], playerDiscards[i], 0));
@@ -380,8 +385,10 @@ void gameLoop(unsigned seed) {
         
         // HUMAN PLAYER HANDLE
         if (ch[currPlayer] == "h") {
-            std::cout << "> ";
-            std::cin >> command;
+            command = std::move(inputTaker<std::string>(
+                [&commType](std::string const& command) { 
+                    return inpCheck(commType, command); },
+                    "Invalid command. Please enter again."));
             
             // PRINT SHUFFLED DECK
             if (command == "deck") {
@@ -427,8 +434,8 @@ void gameLoop(unsigned seed) {
             
             // CHANGE CARD VIEW MODE
             else if (strEquals(command, "cardmode")) {
-                cardmode = inputTaker<std::string>([](std::string const& inp){
-                    return strEquals(inp, "on") || strEquals(inp, "off");
+                cardmode = inputTaker<std::string>([&viewType](std::string const& cardmode){
+                    return inpCheck(viewType, cardmode);
                 }, "Please use the cardmode command followed by on or off.");
                 if (strEquals(cardmode, "on")) {
                     if (cardview) {
@@ -457,10 +464,10 @@ void gameLoop(unsigned seed) {
                 compNum = inputTaker<int>([&ch](int x){
                     return x >= 1 && x <= 4 && ch[x-1] == "c";
                 }, "Invalid input! Please enter a valid computer player!");
-                toMode = inputTaker<std::string>([](std::string const& inp){
-                    return diffType(inp);
+                toMode = inputTaker<std::string>([&diffType](std::string const& toMode){
+                    return inpCheck(diffType, toMode);
                 }, "Invalid input! Expected a difficulty that is one of: e, m, h.");
-                
+
                 if (strEquals(toMode, "h") || strEquals(toMode, "hard")) {
                     players[compNum-1] = std::move(std::make_unique<HardComp>(compNum-1, playerNames[compNum-1], board, playerCards[compNum -1], playerDiscards[compNum-1], getScore(playerDiscards[compNum-1])));
                     std::cout << "Player" << (compNum-1) << " is now playing in " << toMode << "-mode." << std::endl;
@@ -474,13 +481,6 @@ void gameLoop(unsigned seed) {
                     std::cout << "Please enter a valid command and try again!" << std::endl;
                 }
             } 
-            
-            // DEFAULT
-            else {
-                std::cin.ignore(std::numeric_limits<std::streamsize>().max(), '\n');
-                std::cin.clear();
-                std::cout << "Invalid command. Please enter again." << std::endl;
-            }
 
             // INCREMENT TURN AFTER PLAYED
             if (command == "play" || command == "discard") {
