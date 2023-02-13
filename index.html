@@ -3,15 +3,22 @@
 
 <head>
     <title>Straights</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div id="terminal"></div>
-    <form onsubmit="return false">
-        <input id="input" type="text" title="Input" placeholder="Input" disabled="true" autocomplete="false"
-            autocapitalize="false" spellcheck="false" autofocus />
-        <button id="submit" type="submit" onclick="input_submit()" disabled="true">Push me, daddy!</button>
-    </form>
+    <div class="terminal-container">
+        <div class="terminal" id="terminal"></div>
+        <form onsubmit="return false">
+            <div class="input-container">
+                <div class="textbox-container">
+                    <input id="input" type="text" title="Input" placeholder="Input" disabled="true" autocomplete="false"
+                        autocapitalize="false" spellcheck="false" autofocus />
+                </div>
+                <button id="submit" type="submit" onclick="input_submit()" disabled="true">Enter</button>
+            </div>
+        </form>
+    </div>
     <script>
         let input_resolver = () => { }
         function new_input_promise() {
@@ -25,19 +32,27 @@
             my_promise = new_input_promise()
             return result
         }
+        function scroll_div() {
+            var mydiv = document.getElementById("terminal");
+            mydiv.scrollTop = mydiv.scrollHeight;
+        }
         var Module = {
             onRuntimeInitialized: async function () {
                 document.getElementById('input').disabled = false
                 document.getElementById('submit').disabled = false
                 Module.gameLoop(0)
             },
-            print: function(text) {
-                let p = document.createElement('p')
+            print: function (text) {
+                let p = document.createElement('pre')
                 p.append(`${text}`)
                 document.getElementById('terminal').append(p)
+                scroll_div()
             },
-            printErr: function(text) {
-                document.getElementById('terminal').append(`${text}`)
+            printErr: function (text) {
+                let p = document.createElement('pre')
+                p.append(`${text}`)
+                document.getElementById('terminal').append(p)
+                scroll_div()
             }
         }
         function input_submit() {

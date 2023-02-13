@@ -14,7 +14,7 @@ OPTIONS = \
 	-Isrc \
 	-std=c++14 \
 	-Wno-unqualified-std-cast-call \
-	-sASYNCIFY -sASYNCIFY_IMPORTS=getInput
+	-sASYNCIFY -sASYNCIFY_IMPORTS=getInput -sASYNCIFY_STACK_SIZE=128000
 
 straights.js straights.wasm: ${SOURCES}
 	emcc ${OPTIONS} ${SOURCES} -o straights.js

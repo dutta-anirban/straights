@@ -1,0 +1,81 @@
+body {
+    color: white;
+    background: black;
+    overflow: hidden;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 2em;
+}
+
+html, body {
+    height: 100%;
+}
+
+.terminal-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vmax;
+    font-size: 12pt;
+}
+
+.terminal {
+    overflow-y: scroll;
+    height: 80vmin;
+    margin-right: -5px;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+.terminal pre {
+    margin: 0px;
+}
+
+.terminal pre:empty:before {
+    content: ' ';
+    white-space: pre;
+}
+
+.input-container {
+    display: inline-flex;
+    width: 100%;
+}
+
+.input-container * {
+    color: white;
+    /* font-size: 1.2em; */
+    /* font-family: 'Courier New', Courier, monospace; */
+}
+
+.textbox-container {
+    display: table-cell;
+    width: 100%;
+    padding-right: 0.4em;
+}
+
+.textbox-container > input {
+    width: 100%;
+    font-size: 0.8em;
+    padding: 5px;
+    background: black;
+    border: 2px solid;
+    border-radius: 5px;
+}
+
+.input-container > button {
+    margin-right: -4px;
+    margin-left: 10px;
+    background: black;
+    border: 2px solid;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background: #c2c9d288;
+}
