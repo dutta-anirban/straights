@@ -20,7 +20,7 @@ public:
     virtual ~Player() = 0;
     Player(int playerNum, std::string playerName, Board & board, std::vector<Card> & cards, std::vector<Card> & discards, int score);
     virtual bool play();
-    virtual bool discard();
+    virtual int discard();
     virtual void bar();
 };
 #endif //PLAYER_H

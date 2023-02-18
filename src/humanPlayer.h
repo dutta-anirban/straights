@@ -7,7 +7,7 @@ class HumanPlayer : public Player {
     public:
     HumanPlayer(int playerNum, std::string playerName, Board & board, std::vector<Card> & cards, std::vector<Card> & discards, int score);
     bool play() override;
-    bool discard() override;  
+    int discard() override;  
 };
 
 #endif //HUMANPLAYER_H

@@ -17,10 +17,10 @@ bool MedComp::play() {
     return true;
 }
 
-bool MedComp::discard() {
+int MedComp::discard() {
     std::cout << playerName << " (Player " << (playerNum+1) << ") discards " << cards.front() << "." << std::endl << std::endl;
     bar();
     discards.emplace_back(cards.front());
     cards.erase(cards.begin());
-    return true;
+    return 0;
 }

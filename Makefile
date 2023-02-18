@@ -15,6 +15,8 @@ OPTIONS = \
 	-std=c++14 \
 	-Os \
 	-Wno-unqualified-std-cast-call \
+	-DWASM \
+	-fexceptions \
 	-sASYNCIFY -sASYNCIFY_IMPORTS=getInput -sASYNCIFY_STACK_SIZE=128000
 
 straights.js straights.wasm: ${SOURCES}

@@ -55,6 +55,8 @@
         "unordered_set": "cpp",
         "fstream": "cpp",
         "ctime": "cpp",
-        "ratio": "cpp"
-    }
+        "ratio": "cpp",
+        "codecvt": "cpp"
+    },
+    "liveServer.settings.port": 5502
 }

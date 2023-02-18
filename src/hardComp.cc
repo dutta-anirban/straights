@@ -24,7 +24,7 @@ bool HardComp::play() {
     return true;
 }
 
-bool HardComp::discard() {
+int HardComp::discard() {
     int min = 13;
     auto bestCard = cards.begin();
     for (auto i = cards.begin(); i != cards.end(); ++i) {
@@ -37,5 +37,5 @@ bool HardComp::discard() {
     bar();
     discards.emplace_back(*bestCard);
     cards.erase(bestCard);
-    return true;
+    return 0;
 }

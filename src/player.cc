@@ -10,7 +10,7 @@ bool Player::play() {
     return true;
 }
 
-bool Player::discard() {
+int Player::discard() {
     return true;
 }
 

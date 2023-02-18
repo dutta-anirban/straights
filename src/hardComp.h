@@ -6,7 +6,7 @@ class HardComp : public Player {
     public:
     HardComp(int playerNum, std::string playerName, Board & board, std::vector<Card> & cards, std::vector<Card> & discards, int score);
     bool play() override;
-    bool discard() override;  
+    int discard() override;  
 };
 
 #endif //_HARDCOMP_H_

@@ -7,7 +7,7 @@
                 "${workspaceFolder}/src",
                 "${env:EMSDK}/upstream/emscripten/system/include"
             ],
-            "defines": [ "WASM" ],
+            //"defines": [ "WASM" ],
             "compilerPath": "/usr/bin/clang",
             "cppStandard": "c++14",
             "intelliSenseMode": "linux-clang-x64"

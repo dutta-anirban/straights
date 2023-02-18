@@ -23,7 +23,7 @@ bool EasyComp::play() {
     return true;
 }
 
-bool EasyComp::discard() {
+int EasyComp::discard() {
     int max = 0;
     auto bestCard = cards.begin();
     for (auto i = cards.begin(); i != cards.end(); ++i) {
@@ -36,5 +36,5 @@ bool EasyComp::discard() {
     bar();
     discards.emplace_back(*bestCard);
     cards.erase(bestCard);
-    return true;
+    return 0;
 }

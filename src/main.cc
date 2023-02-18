@@ -14,26 +14,11 @@
 #include <chrono>
 #include <deque>
 #include <limits>
+#include <locale>
+#include <codecvt>
 #include <functional>
-
-#ifndef WASM
-template<typename T>
-T inputTaker(std::function<bool(T const&)> pred, std::string const& error_msg) {
-    while(true) {
-        T input;
-        std::cout << "> ";
-        std::cin >> input;
-        bool fail = std::cin.fail() || !pred(input);
-        if(fail) {
-            std::cin.clear();
-            std::cout << error_msg << "\n";
-        }
-        std::cin.ignore(std::numeric_limits<std::streamsize>().max(), '\n');
-        if(!fail) return input;
-    }
-    // Unreachable
-}
-#endif
+#include "inputTaker.h"
+#include <unistd.h>
 
 bool strEquals(std::string const& A, std::string const& B) {
     if(A.size() != B.size()) return false;
@@ -44,16 +29,102 @@ bool strEquals(std::string const& A, std::string const& B) {
 }
 
 bool inpCheck(std::vector<std::string> const& A, std::string const& B) {
-    for (int i = 0; i < A.size(); i++) {
+    for (size_t i = 0; i < A.size(); i++) {
         if (strEquals(A[i], B))
             return true;
     }
     return false;
 }
 
-void printCardVec(std::vector<Card> const &deck, bool cardmode) {
+void printer(const std::string& A, const std::string & type) {
+    int len = A.size();
+
+    // HEADERS
+    if (type == "header") {
+        std::cout << "╔";
+        for (int i = 0; i < len+6; i++) {
+            std::cout << "═";
+        }
+        std::cout << "╗\n║ ◊ " << A <<  " ◊ ║\n╚";
+        for (int i = 0; i < len+6; i++) {
+            std::cout << "═";
+        }
+        std::cout << "╝\n";
+    }
+
+    //SUB-HEADERS
+    else if (type == "sub") {
+        std::cout << "\n    ┌";
+        for (int i = 0; i < len+6; i++) {
+            std::cout << "─";
+        }
+        std::cout << "┐\n    │ ○ " << A <<  " ○ │\n    └";
+        for (int i = 0; i < len+6; i++) {
+            std::cout << "─";
+        }
+        std::cout << "┘\n";
+    }
+
+    // PROMPTS
+    else if (type == "?") {
+        std::cout << "╭";
+        for (int i = 0; i < len+4; i++) {
+            std::cout << "─";
+        }
+        std::cout << "╮\n│ » " << A << " │\n╰";
+        for (int i = 0; i < len+4; i++) {
+            std::cout << "─";
+        }
+        std::cout << "╯\n";\
+    }
+
+    // ALERT
+    else if (type == "!") {
+        std::cout << "┌";
+        for (int i = 0; i < len+4; i++) {
+            std::cout << "─";
+        }
+        std::cout << "┐\n│ ҉ " << A << " │\n└";
+        for (int i = 0; i < len+4; i++) {
+            std::cout << "─";
+        }
+        std::cout << "┘\n";\
+    }
+
+    // MINI TITLE
+    else if (type == "mini") {
+        std::cout << "╭";
+        for (int i = 0; i < len+2; i++) {
+            std::cout << "─";
+        }
+        std::cout << "╮\n│ " << A <<  " │\n╰";
+        for (int i = 0; i < len+2; i++) {
+            std::cout << "─";
+        }
+        std::cout << "╯\n";
+    }
+
+    return;
+}
+
+void printCardVec(std::vector<Card> const &deck, std::wstring const &s, bool cardmode) {
     int i = 0, j = 0, row = 0, sum = 0;
-    if (!cardmode) {
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+    std::string ss = converter.to_bytes(s);
+    if (deck.empty()) {
+        std::cout << "\n╭";
+        for (size_t i = 0; i < s.length()+9; i++) {
+            std::cout << "─";
+        }
+        std::cout << "╮\n│ " << ss << " » NONE │\n╰";
+        for (size_t i = 0; i < s.length()+9; i++) {
+            std::cout << "─";
+        }
+        std::cout << "╯\n";
+    } else if (!cardmode) {
+        if (ss != "") {
+            printer(ss, "sub");
+        }
         for (Card s : deck) {
             ++i;
             std::cout << s;
@@ -71,39 +142,50 @@ void printCardVec(std::vector<Card> const &deck, bool cardmode) {
         while (j > 0) {
             row = (j > 13)? 13:j;
             j -= 13;
-            std::cout << " ";
+            int slen = s.length();
+            for (size_t i = 0; i < slen+8; i++) {
+                std::cout << " ";
+            }
             for (int d = 0; d < row; ++d) {
                 std::cout << "_____    ";
             }
-            std::cout << "\n";
+            std::cout << "\n╭";
+            for (size_t i = 0; i < slen+4; i++) {
+                std::cout << "─";
+            }
+            std::cout << "╮ ";
             for (int d = 0; d < row; ++d) {
                 if ((deck.at(d+sum)).getRank() == Rank::T) {
-                    std::cout << "|10   |  ";
+                    std::cout << "│10   │  ";
                 } else {
-                    std::cout << "|" << rank_to_string((deck.at(d+sum)).getRank()) << "    |  ";
+                    std::cout << "│" << rank_to_string((deck.at(d+sum)).getRank()) << "    │  ";
                 }
                 //std::cout << "|     |  ";
             }
-            std::cout << "\n";
+            std::cout << "\n│ " << ss << " » │";
             for (int d = 0; d < row; ++d) {
-                std::cout << "|  ";
+                std::cout << " │  ";
                 if ((deck.at(d+sum)).getSuit() == Suit::C) {
-                    std::cout << "♣  |  ";
+                    std::cout << "♣  │ ";
                 } else if ((deck.at(d+sum)).getSuit() == Suit::D) {
-                    std::cout << "♦  |  ";
+                    std::cout << "♦  │ ";
                 } else if ((deck.at(d+sum)).getSuit() == Suit::H) {
-                    std::cout << "♥  |  ";
+                    std::cout << "♥  │ ";
                 } else {
-                    std::cout << "♠  |  ";
+                    std::cout << "♠  │ ";
                 }
             }
-            std::cout << "\n";
-                for (int d = 0; d < row; ++d) {
-                std::cout << "|___";
+            std::cout << "\n╰";
+            for (size_t i = 0; i < slen+4; i++) {
+                std::cout << "─";
+            }
+            std::cout << "╯ ";
+            for (int d = 0; d < row; ++d) {
+                std::cout << "│___";
                 if ((deck.at(d+sum)).getRank() == Rank::T) {
-                    std::cout << "10|  ";
+                    std::cout << "10│  ";
                 } else {
-                    std::cout << "_" << rank_to_string((deck.at(d+sum)).getRank()) << "|  ";
+                    std::cout << "_" << rank_to_string((deck.at(d+sum)).getRank()) << "│  ";
                 }
             }
             std::cout << "\n";
@@ -142,56 +224,75 @@ bool gameOver(int prevScore[], const int maxScore, const int numOfPlayers) {
 }
 
 void printHelp() {
-    std::cout << "╔═══════════╗\n";
-    std::cout << "║ OBJECTIVE ║\n";
-    std::cout << "╚═══════════╝\n\n";
-    std::cout << "Straights is a four-player game. The objective is to get the fewest number of points among the players.\n";
-    std::cout << "The game ends when one player accumulates 80 points or more, and the player with the lowest score is declared the winner.\n";
-    std::cout << "If the lowest score is a tie, then all players with that score win.\n\n";
-    std::cout << "╔══════════╗\n";
-    std::cout << "║ THE DECK ║\n";
-    std::cout << "╚══════════╝\n\n";
-    std::cout << "Straights uses a standard 52-card deck, without the jokers. Each player is dealt 13 cards at the beginning of each round.\n";
-    std::cout << "In this game, the Ace is considered to be the lowest card in each suit (rank of 1), while the King is the highest (rank of 13).\n";
-    std::cout << "A Jack has a rank of 11, while the Queen has a rank of 12. The rank of all other cards is their numeric value e.g. 2 has a rank of 2.\n\n";
-    std::cout << "╔══════════╗\n";
-    std::cout << "║ GAMEPLAY ║\n";
-    std::cout << "╚══════════╝\n";
-    std::cout << "  ┌─────────────┐\n";
-    std::cout << "  │ LEGAL PLAYS │\n";
-    std::cout << "  └─────────────┘\n";
-    std::cout << "Immediately following the deal, the player with the 7 of spades goes first.\n";
-    std::cout << "This player must play the 7 of spades in the centre of the table. After the 7 of spades, the players take turns to play cards on the table.\n";
-    std::cout << "At this point, the players must play cards that constitute legal plays. The following cards are legal:\n";
-    std::cout << "* A 7 of any suit. This card starts a new pile on the table.\n";
-    std::cout << "* A card with the same suit and adjacent rank (2A card has adjacent rank if its face value is one more or one less than the rank of card under consideration.\n";
-    std::cout << "The King and Ace of a suit are not considered to be adjacent ranks to each other.) as another card that has already been played.\n";
-    std::cout << "It must be played on the pile of the appropriate suit. (Note that the “pile” is spread across the table, so that play can proceed at either end.)\n";
-    std::cout << "For example, if the 7 of spades is the only card on the table, then the legal plays are: the 7 of diamonds, the 7 of hearts, the 7 of clubs,\n\n";
-    std::cout << "the 8 of spades, and the 6 of spades. Once the 8 of spades is played, the next legal plays are: the 9 of spades, the 6 of spades, the 7 of diamonds, the 7 of hearts, and the 7 of clubs.\n\n";
-    std::cout << "  ┌──────────┐\n";
-    std::cout << "  │ DISCARDS │\n";
-    std::cout << "  └──────────┘\n";
-    std::cout << "When a player has no legal plays, they must then choose a card in their hand, and place it face down in front of them. This is a discard.\n";
-    std::cout << "Note that if a player has at least one legal play in their hand, then they must make a legal play; they may not discard in this case\n\n";
-    std::cout << "╔═════════╗\n";
-    std::cout << "║ SCORING ║\n";
-    std::cout << "╚═════════╝\n";
-    std::cout << "The round ends when all the cards have either been played or discarded. For each player, their score for the round is the sum of all the ranks of the player's discards.\n";
-    std::cout << "Jacks, Queens, and Kings count as 11, 12, and 13 points, respectively. For example, if a player discarded an Ace, a Six, and a King, the number of points would be 1 + 6 + 13 = 20.\n";
-    std::cout << "Each player's game score is of the sum of their scores in each round. If no player has accumulated 80 or more points at the end of a round, then the deck is reshuffled and another round begins.\n\n";
-    std::cout << "╔══════════╗\n";
-    std::cout << "║ COMMANDS ║\n";
-    std::cout << "╚══════════╝\n\n";
-    std::cout << "play <card>                       plays the card. The card must be of the format <rank><suit>. Example: play QC\n";
-    std::cout << "discard <card>                    discards the card. The card must be of the format <rank><suit>. Example: discard 7D\n";
-    std::cout << "deck                              shows how the deck was shuffled. WARNING: This shows you the cards of all the players.\n";
-    std::cout << "cardmode <on/off>                 turns the enhanced Card View feature on or off. Example: cardmode on\n";
-    std::cout << "change <player #> <difficulty>    changes the Difficulty mode of a Computer Player. Example: charge 3 e\n";
-    std::cout << "                                  If Player3 is a Computer Player, its Difficulty will change to an Easy Computer Player level.\n";
-    std::cout << "ragequit                          hands over your cards to a computer (Medium Difficulty) to play for you.\n";
-    std::cout << "quit                              terminates the game immediately. A second confirmaton will be required.\n";
-    std::cout << "help                              shows the rules, objectives, and command guide for the game.\n";
+    printer("OBJECTIVE", "header");
+    std::cout << "Straights is a four-player game. The objective is to get the fewest number of points among the players.\n"
+                 "The game ends when one player accumulates 80 points or more, and the player with the lowest score is\n"
+                 "declared the winner. If the lowest score is a tie, then all players with that score win.\n\n";
+    printer("THE DECK", "header");
+    std::cout << "Straights uses a standard 52-card deck, without the jokers. Each player is dealt 13 cards at the\n"
+                 "beginning of each round. In this game, the Ace is considered to be the lowest card in each suit (rank\n"
+                 "of 1), while the King is the highest (rank of 13). A Jack has a rank of 11, while the Queen has a rank\n"
+                 "of 12. The rank of all other cards is their numeric value e.g. 2 has a rank of 2.\n\n";
+    printer("GAMEPLAY", "header");
+    printer("LEGAL PLAYS", "sub");
+    std::cout << "Immediately following the deal, the player with the 7 of spades goes first.\n"
+                 "This player must play the 7 of spades in the centre of the table. After the 7 of spades, the players\n"
+                 "take turns to play cards on the table. At this point, the players must play cards that constitute legal\n"
+                 "plays. The following cards are legal:\n\n"
+                 "҉ A 7 of any suit. This card starts a new pile on the table.\n\n"
+                 "҉ A card with the same suit and adjacent rank (2A card has adjacent rank if its face value is one more\n"
+                 "  or one less than the rank of card under consideration. The King and Ace of a suit are not considered\n"
+                 "  to be adjacent ranks to each other) as another card that has already been played.\n\n"
+                 "It must be played on the pile of the appropriate suit. (Note that the “pile” is spread across the table,\n"
+                 "so that play can proceed at either end). For example, if the 7 of spades is the only card on the table,\n"
+                 "then the legal plays are: the 7 of diamonds, the 7 of hearts, the 7 of clubs, the 8 of spades, and the\n"
+                 "6 of spades. Once the 8 of spades is played, the next legal plays are: the 9 of spades, the 6 of spades,\n"
+                 "the 7 of diamonds, the 7 of hearts, and the 7 of clubs.\n";
+    printer("DISCARDS", "sub");
+    std::cout << "When a player has no legal plays, they must then choose a card in their hand, and place it face down\n"
+                 "in front of them. This is a discard. Note that if a player has at least one legal play in their hand,\n"
+                 "then they must make a legal play; they may not discard in this case.\n\n";
+    printer("SCORING", "header");
+    std::cout << "The round ends when all the cards have either been played or discarded. For each player, their score\n"
+                 "for the round is the sum of all the ranks of the player's discards. Jacks, Queens, and Kings count as\n"
+                 "11, 12, and 13 points, respectively. For example, if a player discarded an Ace, a Six, and a King,\n"
+                 "the number of points would be 1 + 6 + 13 = 20. Each player's game score is of the sum of their scores\n"
+                 "in each round. If no player has accumulated 80 or more points at the end of a round, then the deck is\n"
+                 "reshuffled and another round begins.\n\n";
+                 /*"╔══════════╗\n"
+                 "║ COMMANDS ║\n"
+                 "╚══════════╝\n\n"
+                 "play <card>                       plays the card. The card must be of the format <rank><suit>. Example: play QC\n"
+                 "discard <card>                    discards the card. The card must be of the format <rank><suit>. Example: discard 7D\n"
+                 "deck                              shows how the deck was shuffled. WARNING: This shows you the cards of all the players.\n"
+                 "cardmode <on/off>                 turns the enhanced Card View feature on or off. Example: cardmode on\n"
+                 "change <player #> <difficulty>    changes the Difficulty mode of a Computer Player. Example: charge 3 e\n"
+                 "                                  If Player3 is a Computer Player, its Difficulty will change to an Easy Computer Player level.\n"
+                 "ragequit                          hands over your cards to a computer (Medium Difficulty) to play for you.\n"
+                 "quit                              terminates the game immediately. A second confirmaton will be required.\n"
+                 "help                              shows the rules, objectives, and command guide for the game.\n"*/
+    printer("ACTIONS", "header");
+    std::cout << "҉ [PLAY] (followed by a card)-----plays the card. The card must be of the format <rank><suit>. Example: 1C for Ace of Clubs\n"
+                 "҉ [DISCARD] (followed by a card)--discards the card. The card must be of the format <rank><suit>. Example: TH for Ten of Spades\n"
+                 "҉ [DECK]--------------------------shows the shuffled deck for the current round. WARNING: This shows you everyone's cards.\n"
+                 "҉ [CARDMODE]----------------------turns the enhanced Card View feature on or off.\n"
+                 "҉ [RAGEQUIT]----------------------hands over your cards to a Computer Player with Medium Difficulty to play for you.\n"
+                 "҉ [QUIT]--------------------------terminates the game. A second prompt is provided before exiting.\n"
+                 "҉ [HELP]--------------------------shows the rules, objectives, and action guide for the game.\n\n";
+}
+
+void exit(std::vector<std::string> const & ynType) {
+    printer("Are you sure you want to quit the game? (y/n)", "?");
+    std::string isSure = inputTaker<std::string>([&ynType](std::string const& inp){
+        return inpCheck(ynType, inp);
+    }, "⇨ Please enter y for YES and n for NO.");
+    if (strEquals(isSure, "y") || strEquals(isSure, "yes")) {
+        printer("Exiting Game ... Shut down complete.", "!");
+        exit(0);
+    } else {
+        printer("Resuming Game ...", "!");
+        return;
+    }
 }
 
 void gameLoop(unsigned seed) {
@@ -223,13 +324,12 @@ void gameLoop(unsigned seed) {
     std::string cardmode = "";
     bool cardview = true;
     int numLegal = 0;
-    std::string quitSure = "";
     std::string compPlayer = "";
     std::string toMode = "";
-    int compNum = -1;
+    // int compNum = -1;
     std::vector<std::string> diffType = {"e", "easy", "m", "medium", "h", "hard"};
-    std::vector<std::string> viewType = {"y", "yes", "n", "no"};
     std::vector<std::string> commType = {"play", "discard", "deck", "cardmode", "change", "ragequit", "quit", "help"};
+    std::vector<std::string> ynType = {"y", "yes", "n", "no"};
 
     // FILLING UP DECK WITH CARDS IN ORDER
     for (int i = 0; i < numOfPlayers; ++i) {
@@ -242,44 +342,64 @@ void gameLoop(unsigned seed) {
     for (int i = 0; i < numOfPlayers; i++) {
         playerNames.emplace_back("Robot "+std::to_string(i+1));
     }
-    std::cout << "\n╔═════════════════════════════════════════════════╗\n";
-    std::cout <<   "║ WELCOME TO STRAIGHTS: THE FOUR-PLAYER CARD GAME ║\n";
-    std::cout <<   "╚═════════════════════════════════════════════════╝\n\n";
+    std::cout << "\n╔═══════════════════════════════════════════════════════════════════════╗\n";
+    std::cout <<   "║                               WELCOME TO                              ║\n";
+    std::cout <<   "║        ░▒▓█▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄ STRAIGHTS ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀█▓▒░        ║\n";
+    std::cout <<   "║                       THE FOUR-PLAYER CARD GAME                       ║\n";
+    std::cout <<   "╚═══════════════════════════════════════════════════════════════════════╝\n\n";
     printHelp();
-    std::cout << "┌───────────────────────────┐\n";
-    std::cout << "│ LET'S SET UP THE PLAYERS! │\n";
-    std::cout << "└───────────────────────────┘\n\n";
-    for (int i = 0; i < numOfPlayers; ++i) {
-        std::cout << "\nIs Player" << (i + 1) << " a human (h) or a computer (c)?\n";
+    printer("LET'S SET UP THE PLAYERS!", "header");
+    for (int i = 0; i < numOfPlayers; ) {
+        std::cout << "\n";
+        printer("Is Player"+std::to_string(i + 1)+" a human (h) or a computer (c)?", "?");
+        //std::cout << "\nIs Player" << (i + 1) << " a human (h) or a computer (c)?\n";
         hc = inputTaker<std::string>([](std::string const& hc) {
-            return hc == "h" || hc == "c";
-        }, "Invalid input! Expected 'h' or 'c'.");
+            return strEquals(hc, "h") || strEquals(hc, "c") || strEquals(hc, "quit");
+        }, "⇨ Let's set up the players correctly! Enter 'h' for human or 'c' for computer.\n TIP: Type 'h' or 'c' in the Input box below and press Enter.\n");
         ch[i] = hc;
         if (hc == "h") {
-            std::cout << "What's your name? Please don't use any spaces! Only the first connected name would be taken!\n";
+            printer("What's your name? Please don't use any spaces! Only the first connected name would be taken!", "?");
             playerNames[i] = std::move(inputTaker<std::string>(
-                [](std::string const& hc) { return true; }, "Invalid input! Expected a string."));
+                [](std::string const& hc) { return true; }, "⇨ Invalid input! Expected a string."));
             players.emplace_back(std::make_unique<HumanPlayer>(i, playerNames[i], board, playerCards[i], playerDiscards[i], 0));
+            printer("Player "+std::to_string(i+1)+" registered as a Human Player. Welcome, "+playerNames[i]+"!", "!");
+            i++;
         }
         else if (hc == "c") {
-            std::cout << "Select computer player difficulty: EASY(e)  MEDIUM(m)  HARD(h). Enter your choice below.\n";
+            printer("Select computer player difficulty: EASY(e)  MEDIUM(m)  HARD(h). Enter your choice below.", "?");
             mode = std::move(inputTaker<std::string>(
                 [&diffType](std::string const& mode) { 
                     return inpCheck(diffType, mode); },
-                    "Invalid input! Expected one of: e, m, h."));
+                    "⇨ Invalid input! Please enter one of: e, m, h."));
+            std::string selected;
             if (strEquals(mode, "e") || strEquals(mode, "easy"))  {
                 players.emplace_back(std::make_unique<EasyComp>(i, playerNames[i], board, playerCards[i], playerDiscards[i], 0));
+                selected = "Easy";
             } else if (strEquals(mode, "m") || strEquals(mode, "medium")) {
                 players.emplace_back(std::make_unique<MedComp>(i, playerNames[i], board, playerCards[i], playerDiscards[i], 0));
+                selected = "Medium";
             } else {
                 players.emplace_back(std::make_unique<HardComp>(i, playerNames[i], board, playerCards[i], playerDiscards[i], 0));
+                selected = "Hard";
             }
+            printer("Player "+std::to_string(i+1)+" registered as a Computer Player in "+selected+" Mode! Beep boop.", "!");
+            i++;
+        } 
+        else if (hc == "quit") {
+            exit(ynType);
         }
     }
-    std::cout << "\nLet's set up the winning threshold! A regular game of straights has the minimum points to win set as 80. A lower threshold will make the game shorter, and vice-versa. What would you like it to be?\n";
+    std::cout << "\n";
+    printer("LET'S SET THE POINTS THRESHOLD!", "header");
+    std::cout << "╭────────────────────────────────────────────────────────────────────────────────────────────╮\n"
+                 "│ NOTE: A regular game of straights has » 80 « set as the minimum points to finish the game. │\n"
+                 "│ TIP: It must be more than 1. A lower threshold will make the game shorter, and vice-versa. │\n"
+                 "│ » Setting it as » 1 « will guarantee a one-round game! What would you like it to be?       │\n"
+                 "╰────────────────────────────────────────────────────────────────────────────────────────────╯\n\n";
     maxScore = inputTaker<int>([](int x){
         return x >= 1;
-    }, "Invalid input! Expected threshold should be more than one (>= 1).");
+    }, "⇨ Invalid input! Chosen threshold should be more than one (>= 1).\nTIP: Put a number in the Input box below and press Enter.\n");
+    printer("The minimum points required to finish this session has been set to » "+std::to_string(maxScore), " « !");
 
     // GAME PLAY
     while (!gameOver(prevScore, maxScore, numOfPlayers)) {
@@ -309,184 +429,224 @@ void gameLoop(unsigned seed) {
             int player7S = has7S(playerCards, numOfPlayers);
             currPlayer = player7S;
             if (round != 0) {
-                std::cout << "────────────────────────────────SCORE BOARD────────────────────────────────\n\n";
+                std::cout << "\n╔═══════════════════════════════════════════════════════════════════════╗\n";
+                std::cout <<   "║          ▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄ SCORE BOARD ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀            ║\n";
+                std::cout <<   "╚═══════════════════════════════════════════════════════════════════════╝\n\n";
                 for (int i = 0; i < numOfPlayers; ++i) {
-                    std::cout << playerNames[i] << " (Player " << (i+1) <<")'s discarded cards: ";
+                    std::cout << "\n┌──────────────────────────────────────────────────────────────────┐\n";
+                    std::cout <<   "│                            ↓ PLAYER " << (i+1) << " ↓                          │\n";
+                    std::cout <<   "└──────────────────────────────────────────────────────────────────┘\n";
+                    printer("Name: "+playerNames[i], "!");
                     if (playerDiscards[i].size() == 0) {
-                        std::cout << "NONE\n";
+                        printer("Discarded Cards: NONE", "!");
                     } else {
-                        std::cout << "\n";
-                        printCardVec(playerDiscards[i], cardview);
+                        //printer("Discarded Cards:", "!");
+                        printCardVec(playerDiscards[i], L"DISCARDED CARDS", cardview);
                     }
-                    std::cout << playerNames[i] << " (Player " << (i+1) <<")'s score: ";
                     temp = getScore(playerDiscards[i]);
-                    std::cout << prevScore[i] << " + " << temp << " = " << (temp + prevScore[i]);
-                    std::cout << "\n───────────────────────────────────────────────────────────────────\n";
+                    printer("Score: "+std::to_string(prevScore[i])+" + "+std::to_string(temp)+" = "+std::to_string(temp + prevScore[i]), "!");
                     prevScore[i] += temp;
                     playerDiscards[i].clear();
                 }
+                std::cout << "\n───────────────────────────────────────────────────────────────────\n";
                 if (gameOver(prevScore, maxScore, numOfPlayers)) {
                     break;
                 }
             }
             round++;
             turns = 0;
-            std::cout << "\nThe winning threshold hasn't been met yet! Setting up new deck and table . . .\n\n";
-            std::string roundNum = (round < 10)? "0" + std::to_string(round) : std::to_string(round);
-            std::cout << " ╔════════════╗\n";
-            std::cout << " ║  ROUND " << roundNum << "  ║\n";
-            std::cout << " ╚════════════╝\n\n";
-            std::cout << playerNames[player7S] << " (Player " << (player7S+1) << ") starts the round.\n\n";
+            printer("The winning threshold hasn't been met yet! Setting up new deck and table . . .", "!");
+            printer("                                   ROUND "+std::to_string(round)+"                                   ", "header");
         }
 
         // BOARD
-        std::cout << " ╔════════════════════╗\n";
-        std::cout << " ║ CARDS ON THE TABLE ║\n";
-        std::cout << " ╚════════════════════╝\n";
-        std::cout << "\nClubs: ";
-        for (auto x : board.getClubs()) {
-            std::cout << rank_to_string(x.getRank()) << " ";
-        }
-        std::cout << "\nDiamonds: ";
-        for (auto x : board.getDiamonds()) {
-            std::cout << rank_to_string(x.getRank()) << " ";
-        }
-        std::cout << "\nHearts: ";
-        for (auto x : board.getHearts()) {
-            std::cout << rank_to_string(x.getRank()) << " ";
-        }
-        std::cout << "\nSpades: ";
-        for (auto x : board.getSpades()) {
-            std::cout << rank_to_string(x.getRank()) << " ";
-        }
-        std::cout << "\n\nIt is " << playerNames[currPlayer] << " (Player " << currPlayer+1 << ")'s turn. Your hand: ";
-        if (cardview) {
-            std::cout << "\n";
-        }
-        printCardVec(playerCards[currPlayer], cardview);
-        std::cout << "Your legal plays: ";
-        for (auto x : playerCards[currPlayer]) {
-            if (board.validMove(x)) {
-                if (cardview == false) {
-                    std::cout << x << " ";
-                } else {
-                    numLegal++;
-                    legals.emplace_back(x);
-                }
-            }
-        }
-        if (legals.size() == 0) {
-            std::cout << "NONE! You must discard!\n";
+        printer("CARDS ON THE TABLE", "header");
+
+        // CLUBS
+        std::deque<Card> tempDQ = board.getClubs();
+        std::vector<Card> temp = {tempDQ.begin(), tempDQ.end()};
+        std::string tempStr = "";
+        if (temp.empty()) {
+            printCardVec(temp, L"♣ CLUBS ♣", cardview);
         } else {
             if (cardview) {
-                std::cout << "\n";
+                printCardVec(temp, L"♣ CLUBS ♣", cardview);
+            } else {
+                for (auto x : temp) {
+                    tempStr += " "+rank_to_string(x.getRank());
+                }
+                printer("♣ CLUBS ♣ :"+tempStr, "mini");
             }
-            printCardVec(legals, cardview);
+        }
+
+        // DIAMONDS
+        tempDQ = board.getDiamonds();
+        temp = {tempDQ.begin(), tempDQ.end()};
+        tempStr = "";
+        if (temp.empty()) {
+            printCardVec(temp, L"♦ DIAMONDS ♦", cardview);
+        } else {
+            if (cardview) {
+                printCardVec(temp, L"♦ DIAMONDS ♦", cardview);
+            } else {
+                for (auto x : temp) {
+                    tempStr += " "+rank_to_string(x.getRank());
+                }
+                printer("♦ DIAMONDS ♦ :"+tempStr, "mini");
+            }
+        }
+
+        // HEARTS
+        tempDQ = board.getHearts();
+        temp = {tempDQ.begin(), tempDQ.end()};
+        tempStr = "";
+        if (temp.empty()) {
+            printCardVec(temp, L"♥ HEARTS ♥", cardview);
+        } else {
+            if (cardview) {
+                printCardVec(temp, L"♥ HEARTS ♥", cardview);
+            } else {
+                for (auto x : temp) {
+                    tempStr += " "+rank_to_string(x.getRank());
+                }
+                printer("♥ HEARTS ♥ :"+tempStr, "mini");
+            }
+        }
+
+        // SPADES
+        tempDQ = board.getSpades();
+        temp = {tempDQ.begin(), tempDQ.end()};
+        tempStr = "";
+        if (temp.empty()) {
+            printCardVec(temp, L"♠ SPADES ♠", cardview);
+            std::cout << "\n";
+        } else {
+            if (cardview) {
+                printCardVec(temp, L"♠ SPADES ♠", cardview);
+            } else {
+                for (auto x : temp) {
+                    tempStr += " "+rank_to_string(x.getRank());
+                }
+                printer("♠ SPADES ♠ :"+tempStr, "mini");
+            }
+        }
+        printer("It is "+playerNames[currPlayer]+" (Player "+std::to_string(currPlayer+1)+")'s turn.", "!");
+        printCardVec(playerCards[currPlayer], L"YOUR HAND", cardview);
+        for (auto x : playerCards[currPlayer]) {
+            if (board.validMove(x)) {
+                numLegal++;
+                legals.emplace_back(x);
+            }
+        }
+        if (numLegal == 0) {
+            printer("LEGAL PLAYS: NONE! You must discard.", "!");
+        } else {
+            printCardVec(legals, L"LEGAL PLAYS", cardview);
             legals.clear();
         }
         
         // HUMAN PLAYER HANDLE
         if (ch[currPlayer] == "h") {
-            command = std::move(inputTaker<std::string>(
-                [&commType](std::string const& command) { 
-                    return inpCheck(commType, command); },
-                    "Invalid command. Please enter again."));
-            
-            // PRINT SHUFFLED DECK
-            if (command == "deck") {
-                printCardVec(deck, cardview);
-            } 
-            
-            // PLAY OPTION
-            else if (command == "play") {
-                if (!players[currPlayer]->play()) {
-                    std::cout <<  "Invalid play. Please enter a valid play.\n";
-                    continue;
+            bool didPlay = false;
+            int didDiscard = -1;
+            while(true) {
+                command = std::move(inputTaker<std::string>(
+                    [&commType](std::string const& command) { 
+                        return inpCheck(commType, command); },
+                        "⇨ Invalid action! Please perform a valid action."));
+                
+                // PRINT SHUFFLED DECK
+                if (strEquals(command, "deck")) {
+                    printer("This will show you everyone's cards! Are you sure you want to see it? (y/n)", "?");
+                    std::string isSure = inputTaker<std::string>([&ynType](std::string const& inp){
+                        return inpCheck(ynType, inp);
+                    }, "⇨ Please enter y for YES and n for NO.");
+                    if (strEquals(isSure, "y") || strEquals(isSure, "yes")) {
+                        printer("SHUFFLED DECK FOR THIS ROUND", "sub");
+                        printCardVec(deck, L"", cardview);
+                    } else {
+                        printer("Deck not shown. Resuming Game ...", "!");
+                    }  
                 }
-            } 
-            
-            // DISCARD ACTION
-            else if (command == "discard") {
-                if (!players[currPlayer]->discard()) {
-                    continue;
-                }
-            } 
-            
-            // QUIT / TERMINATE GAME
-            else if (command == "quit") {
-                std::cout << "Are you sure you want to quit the game? (y/n)\n";
-                quitSure = inputTaker<std::string>([](std::string const& inp){
-                    return strEquals(inp, "yes") || strEquals(inp, "y") || strEquals(inp, "no") || strEquals(inp, "n");
-                }, "Please enter y for YES and n for NO.");
-                if (strEquals(quitSure, "y") || strEquals(quitSure, "yes")) {
-                    std::cout << "Exiting Game ... Shut down complete.\n";
-                    exit(0);
-                } else {
-                    std::cout << "Resuming Game ... \nPlease continue with your next command.\n";
-                }
-            }
 
-            // RAGEQUIT OPTION   
-            else if (command == "ragequit") {
-                std::unique_ptr<Player> p = std::make_unique<MedComp>(currPlayer, playerNames[currPlayer], board, playerCards[currPlayer], playerDiscards[currPlayer], getScore(playerDiscards[currPlayer]));
-                players[currPlayer] = std::move(p);
-                ch[currPlayer] = "c";
-                std::cout << playerNames[currPlayer] << " (Player " << (currPlayer + 1) << ") ragequits. A computer will now take over.\n";
-            } 
-            
-            // CHANGE CARD VIEW MODE
-            else if (strEquals(command, "cardmode")) {
-                cardmode = inputTaker<std::string>([&viewType](std::string const& cardmode){
-                    return inpCheck(viewType, cardmode);
-                }, "Please use the cardmode command followed by on or off.");
-                if (strEquals(cardmode, "on")) {
+                // QUIT / TERMINATE GAME
+                else if (strEquals(command, "quit")) {
+                    exit(ynType);
+                }
+
+                // RAGEQUIT OPTION   
+                else if (command == "ragequit") {
+                    std::unique_ptr<Player> p = std::make_unique<MedComp>(currPlayer, playerNames[currPlayer], board, playerCards[currPlayer], playerDiscards[currPlayer], getScore(playerDiscards[currPlayer]));
+                    players[currPlayer] = std::move(p);
+                    ch[currPlayer] = "c";
+                    printer("Handing over "+playerNames[currPlayer]+" (Player "+std::to_string(currPlayer+1)+")'s cards to a computer . . . Ragequit successful.", "!");
+                    break;
+                }
+
+                // CHANGE CARD VIEW MODE
+                else if (strEquals(command, "cardmode")) {
+                    cardview = !cardview;
                     if (cardview) {
-                        std::cout << "Card View Mode has been on.\n";
+                        printer("Card View Mode has been activated.", "!");
                     } else {
-                        cardview = true;
-                        std::cout << "Card View Mode has been activated.\n";
+                        printer("Card View Mode has been deactivated.", "!");
                     }
-                } else {
-                    if (!cardview) {
-                        std::cout << "Card View Mode has been off.\n";
-                    } else {
-                        cardview = false;
-                        std::cout << "Card View Mode has been deactivated. Cards will appear in classic view now.\n";
+                } 
+                
+                // PRINT COMMAND HELP
+                else if (strEquals(command, "help")) {
+                    printHelp();
+                }
+
+                // CHANGE COMPUTER DIFFICULTY
+                /*else if (command == "change") {
+                    compNum = inputTaker<int>([&ch](int x){
+                        return x >= 1 && x <= 4 && ch[x-1] == "c";
+                    }, "Invalid input! Please enter a valid computer player!");
+                    toMode = inputTaker<std::string>([&diffType](std::string const& toMode){
+                        return inpCheck(diffType, toMode);
+                    }, "Invalid input! Expected a difficulty that is one of: e, m, h.");
+
+                    if (strEquals(toMode, "h") || strEquals(toMode, "hard")) {
+                        players[compNum-1] = std::move(std::make_unique<HardComp>(compNum-1, playerNames[compNum-1], board, playerCards[compNum -1], playerDiscards[compNum-1], getScore(playerDiscards[compNum-1])));
+                    } else if (strEquals(toMode, "e") || strEquals(toMode, "easy")) {
+                        players[compNum-1] = std::move(std::make_unique<EasyComp>(compNum-1, playerNames[compNum-1], board, playerCards[compNum-1], playerDiscards[compNum-1], getScore(playerDiscards[compNum-1])));
+                    } else if (strEquals(toMode, "m") || strEquals(toMode, "medium")) {
+                        players[compNum-1] = std::move(std::make_unique<MedComp>(compNum-1, playerNames[compNum-1], board, playerCards[compNum-1], playerDiscards[compNum-1], getScore(playerDiscards[compNum-1])));
+                    }
+                    std::cout << "Player" << (compNum-1) << " is now playing in " << toMode << "-mode.\n";
+                }*/
+
+                // PLAY OPTION
+                else if (strEquals(command, "play")) {
+                    printer("PLAY button pressed. Enter a legal card in the Input box below and press Enter to play.", "!");
+                    didPlay = players[currPlayer]->play();
+                    if (!didPlay) {
+
+                    }
+                } 
+                
+                // DISCARD ACTION
+                else if (strEquals(command, "discard")) {
+                    didDiscard = players[currPlayer]->discard();
+                    if (didDiscard == 1) {
+                        printer("YOU HAVE A LEGAL PLAY! You must play it!", "!");
+                    } else if (didDiscard == 2) {
+                        printer("INVALID CARD ENTERED! Try again!", "!");
+                    } else if (didDiscard == 3) {
+                        printer("Please try again with a card selected from your hand!", "!");
                     }
                 }
-            } 
-            
-            // PRINT COMMAND HELP
-            else if (strEquals(command, "help")) {
-                printHelp();
-            }
-            
-            // CHANGE COMPUTER DIFFICULTY
-            else if (command == "change") {
-                compNum = inputTaker<int>([&ch](int x){
-                    return x >= 1 && x <= 4 && ch[x-1] == "c";
-                }, "Invalid input! Please enter a valid computer player!");
-                toMode = inputTaker<std::string>([&diffType](std::string const& toMode){
-                    return inpCheck(diffType, toMode);
-                }, "Invalid input! Expected a difficulty that is one of: e, m, h.");
 
-                if (strEquals(toMode, "h") || strEquals(toMode, "hard")) {
-                    players[compNum-1] = std::move(std::make_unique<HardComp>(compNum-1, playerNames[compNum-1], board, playerCards[compNum -1], playerDiscards[compNum-1], getScore(playerDiscards[compNum-1])));
-                } else if (strEquals(toMode, "e") || strEquals(toMode, "easy")) {
-                    players[compNum-1] = std::move(std::make_unique<EasyComp>(compNum-1, playerNames[compNum-1], board, playerCards[compNum-1], playerDiscards[compNum-1], getScore(playerDiscards[compNum-1])));
-                } else if (strEquals(toMode, "m") || strEquals(toMode, "medium")) {
-                    players[compNum-1] = std::move(std::make_unique<MedComp>(compNum-1, playerNames[compNum-1], board, playerCards[compNum-1], playerDiscards[compNum-1], getScore(playerDiscards[compNum-1])));
+                // INCREMENT TURN AFTER PLAYED
+                if (didPlay || didDiscard==0) {
+                    currPlayer++;
+                    if (currPlayer == 4) {
+                        turns++;
+                    }
+                    currPlayer = currPlayer % 4;
+                    break;
                 }
-                std::cout << "Player" << (compNum-1) << " is now playing in " << toMode << "-mode.\n";
-            } 
-
-            // INCREMENT TURN AFTER PLAYED
-            if (command == "play" || command == "discard") {
-                currPlayer++;
-                if (currPlayer == 4) {
-                    turns++;
-                }
-                currPlayer = currPlayer % 4;
             }
         }
         
@@ -513,31 +673,28 @@ void gameLoop(unsigned seed) {
     }
 
     // DECLARING THE WINNER
-    std::cout << "╔═════════════════╗\n";
-    std::cout << "║ CONGRATULATIONS ║\n";
-    std::cout << "╚═════════════════╝\n\n";
+    printer("CONGRATULATIONS", "header");
     tempWinners = winners;
+    std::string winnerNames = "";
     for (int i = 0; i < numOfPlayers; ++i) {
         if (prevScore[i] == min) {
-            std::cout << playerNames[i] << " ";
+            winnerNames += playerNames[i];
             tempWinners--;
-            if (tempWinners > 0) {
-                std::cout << "and ";
+            if (tempWinners > 1) {
+                winnerNames += ", ";
+            } else if (tempWinners == 1) {
+                winnerNames += " and ";
             }
         }
     }
+    winnerNames += (winners > 1)? " win!" : " wins!";
+    printer(winnerNames, "mini");
     if (winners > 1) {
-        std::cout << "win!\n\n";
-    } else {
-        std::cout << "wins!\n\n";
+        printer("It was a "+std::to_string(winners)+"-way tie!", "!");
     }
-    if (winners > 1) {
-        std::cout << "It was a " << winners << "-way tie!\n\n";
-    }
-    std::cout << "Thanks for playing " << playerNames[0] << ", " << playerNames[1] << ", " << playerNames[2] << ", and " << playerNames[3] << "! <3\n\n";
-    std::cout << "╔═══════════╗\n";
-    std::cout << "║ GAME OVER ║\n";
-    std::cout << "╚═══════════╝\n\n";
+    std::cout << "\nThanks for playing " << playerNames[0] << ", " << playerNames[1] << ", " << playerNames[2] << ", and " << playerNames[3] << "! <3\n\n";
+    printer("GAME OVER", "header");
+    std::cout << "\n";
 }
 
 #ifndef WASM
@@ -561,11 +718,3 @@ int main(int argc, char **argv) {
     gameLoop(seed);
 }
 #endif
-
-// ┌─────────────┐
-// │ SAMPLE TEXT │
-// └─────────────┘
-
-// ╔═════════════╗
-// ║ SAMPLE TEXT ║
-// ╚═════════════╝

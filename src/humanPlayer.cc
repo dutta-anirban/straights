@@ -1,12 +1,13 @@
 #include "humanPlayer.h"
+#include "inputTaker.h"
 
 HumanPlayer::HumanPlayer(int playerNum, std::string playerName, Board & board, std::vector<Card> & cards, std::vector<Card> & discards, int score):
 Player(playerNum, playerName, board, cards, discards, score) {}
 
 bool HumanPlayer::play() {
-    Card cardChoice = cards.front();
+    Card cardChoice;
     try {
-        std::cin >> cardChoice;
+        cardChoice = inputTaker<Card>([](Card const& ignored){ return true; }, "⇨ Error is impossible.");
     } catch (std::invalid_argument &e) {
         std::cerr << e.what() << std::endl;
         return false;
@@ -18,7 +19,7 @@ bool HumanPlayer::play() {
 
     auto it = find(cards.begin(), cards.end(), cardChoice);
     if (it != cards.end()) {
-        std::cout << playerName << " (Player " << (playerNum+1) << ") plays " << cardChoice << ".\n\n";
+        std::cout << "⇨ "<< playerName << " (Player " << (playerNum+1) << ") plays " << cardChoice << ".\n\n";
         bar();
         board.play(cardChoice);
         cards.erase(it);
@@ -29,23 +30,25 @@ bool HumanPlayer::play() {
     }
 }
 
-bool HumanPlayer::discard() {
-    Card cardChoice = cards.front();
-    int counter = -1;
-    int index = -1;
-    try {
-        std::cin >> cardChoice;
-    } catch (std::invalid_argument &e) {
-        std::cerr << e.what() << std::endl;
-        return false;
-    }
-
+int HumanPlayer::discard() {
     // CHECKING IF LEGAL MOVES EXIST
     for (auto x : cards) {
         if (board.validMove(x)) {
-            std::cout << "You have a legal play. Please play it!" << std::endl;
-            return false;
+            return 1;                   // ERROR 1: HAS LEGAL PLAY(S)
         }
+    }
+
+    std::cout << "\n┌─────────────────────────────────────────────────────────────────┐\n";
+    std::cout <<   "│ DISCARD button pressed. Enter a card from your hand to discard! │\n";
+    std::cout <<   "└─────────────────────────────────────────────────────────────────┘\n";
+    Card cardChoice;
+    int counter = -1;
+    int index = -1;
+    try {
+        cardChoice = inputTaker<Card>([](Card const& ignored){ return true; }, "⇨ Error is impossible.");
+    } catch (std::invalid_argument &e) {
+        std::cerr << e.what() << std::endl;
+        return 2;                   // ERROR 2: INVALID CARD ENTRY
     }
 
     // CHECKING IF THE CARD IS OWNED
@@ -58,13 +61,12 @@ bool HumanPlayer::discard() {
 
     // DISCARDING CARD
     if (index == -1) {
-        std::cout << "Please discard a valid card." << std::endl;
-        return false;
+        return 3;                   // ERROR 3: ILLEGAL CARD SELECTED
     } else {
-        std::cout << playerName << " (Player " << (playerNum+1) << ") discards " << cardChoice << ".\n\n";
+        std::cout << "⇨ " << playerName << " (Player " << (playerNum+1) << ") discards " << cardChoice << ".\n\n";
         bar();
         discards.emplace_back(cardChoice);
         cards.erase(cards.begin()+index);
-        return true;
+        return 0;
     }
 }

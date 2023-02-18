@@ -19,6 +19,7 @@ class Card {
 	
     public:
 	Card(Suit, Rank);
+	Card() : s{Suit::C}, r{Rank::A} { };
 	Suit getSuit() const;
 	Rank getRank() const;
     std::string getCardName() const;

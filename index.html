@@ -9,13 +9,22 @@
 <body>
     <div class="terminal-container">
         <div class="terminal" id="terminal"></div>
+        <div class="input-container">
+            <button class="button-54" id="submit1" role="button" onclick="command_input('play', 'submit1')">Play</button>
+            <button class="button-54" id="submit2" role="button" onclick="command_input('discard', 'submit2')">Discard</button>
+            <button class="button-54" id="submit3" role="button" onclick="command_input('deck', 'submit3')">Deck</button>
+            <button class="button-54" id="submit4" role="button" onclick="command_input('cardmode', 'submit4')">Card View</button>
+            <button class="button-54" id="submit5" role="button" onclick="command_input('ragequit', 'submit5')">Ragequit</button>
+            <button class="button-54" id="submit6" role="button" onclick="command_input('quit', 'submit6')">Quit</button>
+            <button class="button-54" id="submit7" role="button" onclick="command_input('help', 'submit7')">Help</button>
+        </div>
         <form onsubmit="return false">
             <div class="input-container">
                 <div class="textbox-container">
                     <input id="input" type="text" title="Input" placeholder="Input" disabled="true" autocomplete="false"
                         autocapitalize="false" spellcheck="false" autofocus />
                 </div>
-                <button id="submit" type="submit" onclick="input_submit()" disabled="true">Enter</button>
+                <button class="button-54" id="submit" type="submit" onclick="input_submit()" disabled="true">Enter</button>
             </div>
         </form>
     </div>
@@ -55,10 +64,29 @@
                 scroll_div()
             }
         }
+        
+        /*var SubmitBtns = {
+            "submit1": "white",
+            "submit2": "white",
+            "submit3": "white",
+            "submit4": "white",
+            "submit5": "white",
+            "submit6": "white",
+            "submit7": "white",
+        };*/
+
         function input_submit() {
             const textbox = document.getElementById('input')
+            console.log(textbox.value)
             input_resolver(textbox.value)
             textbox.value = ''
+        }
+        function command_input(command, id) {
+            //const button = document.getElementById(id);
+            //SubmitBtns[id] = SubmitBtns[id] === "white" ? "red" : "white";
+            //button.style.color = SubmitBtns[id];
+            console.log("Command entered:", command)
+            input_resolver(command)
         }
     </script>
     <script src="straights.js"></script>

@@ -64,33 +64,33 @@ std::istream &operator>>(std::istream &in, Card &c) {
     std::string str;
     in >> str;
     if (str.length() > 2) {
-        throw std::invalid_argument("Invalid Length.");
+        throw std::invalid_argument("⇨ That's not a card! Press the action buttons to try again.");
     }
-    if (str.at(0) == 'A') {
+    if (str.at(0) == 'A' || str.at(0) == 'a' || str.at(0) == '1') {
         c.r = Rank::A;
-    } else if (str.at(0) == 'T') {
+    } else if (str.at(0) == 'T' || str.at(0) == 't') {
         c.r = Rank::T;
-    } else if (str.at(0) == 'J') {
+    } else if (str.at(0) == 'J' || str.at(0) == 'j') {
         c.r = Rank::J;
-    } else if (str.at(0) == 'Q') {
+    } else if (str.at(0) == 'Q' || str.at(0) == 'q') {
         c.r = Rank::Q;
-    } else if (str.at(0) == 'K') {
+    } else if (str.at(0) == 'K' || str.at(0) == 'k') {
         c.r = Rank::K;
     } else if ((str.at(0)-'0') > 1 && (str.at(0)-'0') < 10) {
         c.r = static_cast<Rank>((str.at(0))-'0');
     } else {
-        throw std::invalid_argument("Wrong Card<Rank> Syntax.");
+        throw std::invalid_argument("⇨ Wrong Card<Rank> Syntax. Try again!");
     }
-    if (str.at(1) == 'C') {
+    if (str.at(1) == 'C' || str.at(1) == 'c') {
         c.s = Suit::C;
-    } else if (str.at(1) == 'D') {
+    } else if (str.at(1) == 'D' || str.at(1) == 'd') {
         c.s = Suit::D;
-    } else if (str.at(1) == 'H') {
+    } else if (str.at(1) == 'H' || str.at(1) == 'h') {
         c.s = Suit::H;
-    } else if (str.at(1) == 'S') {
+    } else if (str.at(1) == 'S' || str.at(1) == 's') {
         c.s = Suit::S;
     } else {
-        throw std::invalid_argument("Wrong Card<Suit> Syntax.");
+        throw std::invalid_argument("⇨ Wrong Card<Suit> Syntax. Try again!");
     }
 	return in;
 }
