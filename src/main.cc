@@ -229,10 +229,17 @@ void printHelp() {
                  "The game ends when one player accumulates 80 points or more, and the player with the lowest score is\n"
                  "declared the winner. If the lowest score is a tie, then all players with that score win.\n\n";
     printer("THE DECK", "header");
-    std::cout << "Straights uses a standard 52-card deck, without the jokers. Each player is dealt 13 cards at the\n"
-                 "beginning of each round. In this game, the Ace is considered to be the lowest card in each suit (rank\n"
-                 "of 1), while the King is the highest (rank of 13). A Jack has a rank of 11, while the Queen has a rank\n"
-                 "of 12. The rank of all other cards is their numeric value e.g. 2 has a rank of 2.\n\n";
+    std::cout << "The game of Straights uses a standard 52-card deck, without the jokers. Each player is dealt 13 cards\n"
+                 "at the beginning of each round. In this game, the Ace is considered to be the lowest card in each suit\n"
+                 "(rank of 1), while the King is the highest (rank of 13). A Jack has a rank of 11, while the Queen has\n"
+                 "a rank of 12. The rank of all other cards is their numeric value e.g. 2 has a rank of 2.\n"
+                 "This game uses 1 for Ace, T for 10, J for Jack, Q for Queen, and K for King. The codename / card format\n"
+                 " for the cards of the deck are as follows:\n"
+                 "Clubs:    1C 2C 3C 4C 5C 6C 7C 8C 9C TC JC QC KC\n"
+                 "Diamonds: 1D 2D 3D 4D 5D 6D 7D 8D 9D TD JD QD KD\n"
+                 "Hearts:   1H 2H 3H 4H 5H 6H 7H 8H 9H TH JH QH KH\n"
+                 "Spades:   1S 2S 3S 4S 5S 6S 7S 8S 9S TS JS QS KS\n"
+                 "These codenames (<rank><suit>) must be used while playing or discarding the respective cards.\n\n";
     printer("GAMEPLAY", "header");
     printer("LEGAL PLAYS", "sub");
     std::cout << "Immediately following the deal, the player with the 7 of spades goes first.\n"
