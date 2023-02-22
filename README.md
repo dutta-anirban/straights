@@ -170,5 +170,6 @@ If multiple players tie for the win, print the above message for each winner.
 If no one exceeded the score limit, then reshuffle the deck and begin another round.
 
 ## 6 Gitpod support
-Run the command ```make``` in the terminal. Then, right click on the ```.html``` file created and press Open in Live Server to launch the game. The game is also hosted on https://dutta.itch.io/straights
+On the Gitpod executable environment, run the command ```make``` in the terminal. Then, right click on the ```.html``` file created and press Open in Live Server to launch the game. The game is also hosted on [itch.io](https://dutta.itch.io/straights).
+
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/dutta-anirban/straights)
